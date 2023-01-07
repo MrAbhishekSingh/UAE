@@ -5,10 +5,10 @@ import RNSimpleOpenvpn, { addVpnStateListener, removeVpnStateListener } from 're
 import image from './src/assets/background.jpg'
 import JP from './src/assets/japan.png'
 import GR from './src/assets/ca.jpg'
-import RS from './src/assets/russian.png'
+import RS from './src/assets/usa.png'
 import { NetworkInfo } from 'react-native-network-info';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AppOpenAd, InterstitialAd, RewardedAd, BannerAd, TestIds, BannerAdSize, AdEventType } from 'react-native-google-mobile-ads';
+import { InterstitialAd, BannerAd, TestIds, BannerAdSize, AdEventType } from 'react-native-google-mobile-ads';
 
 
 
@@ -27,7 +27,7 @@ const Data = [
   },
   {
     id: 3,
-    name: 'Russia',
+    name: 'Usa',
     flag: RS,
   },
 ]
@@ -44,8 +44,8 @@ const App = () => {
     ? TestIds.BANNER
     : 'ca-app-pub-5136668440114711/9841925955';
 
-  const adUnitIdd = __DEV__ ? TestIds.INTERSTITIAL : 
-  'ca-app-pub-5136668440114711/7116562400'
+  const adUnitIdd = __DEV__ ? TestIds.INTERSTITIAL :
+    'ca-app-pub-5136668440114711/7116562400'
 
   useEffect(() => {
     async function observeVpn() {
@@ -135,18 +135,32 @@ const App = () => {
     };
   }, []);
   useEffect(() => {
-    if(status == 2){
-    let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
-      requestNonPersonalizedAdsOnly: true,
-      keywords: ['fashion', 'clothing'],
-    });
-    interstitial.addAdEventListener(AdEventType.LOADED, () => {
-      interstitial.show();
-    });
-    interstitial.load();
-    return () => {
-      interstitialListener = null;
-    };}
+    if (status === '2') {
+      let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+        requestNonPersonalizedAdsOnly: true,
+        keywords: ['fashion', 'clothing'],
+      });
+      interstitial.addAdEventListener(AdEventType.LOADED, () => {
+        interstitial.show();
+      });
+      interstitial.load();
+      return () => {
+        interstitialListener = null;
+      }
+    }
+    if (status === '0') {
+      let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+        requestNonPersonalizedAdsOnly: true,
+        keywords: ['fashion', 'clothing'],
+      });
+      interstitial.addAdEventListener(AdEventType.LOADED, () => {
+        interstitial.show();
+      });
+      interstitial.load();
+      return () => {
+        interstitialListener = null;
+      }
+    }
   }, [status]);
 
   const textstyle = {
@@ -210,7 +224,11 @@ const App = () => {
                       }
                     >
                       <Image
-                        style={{ height: 20, width: 50, borderWidth: 2 }}
+                        style={{
+                          height: 25,
+                          width: 50,
+                          borderRadius: 3,
+                        }}
                         source={item.flag}
                       />
                       <Text style={{
@@ -251,7 +269,7 @@ const App = () => {
               onPress={stopOvpn}
             >
               <Text style={styles.textStyle}>Disconnect</Text>
-            </Pressable> :  
+            </Pressable> :
             <Pressable
               style={[styles.button, styles.buttonOpen]}
               onPress={stopOvpn}
@@ -286,7 +304,6 @@ const styles = StyleSheet.create({
   },
   contain: {
     justifyContent: 'center',
-    borderWidth: 1,
     width: '100%',
     height: 50,
     marginVertical: 20,
@@ -295,7 +312,6 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   modalView: {
-
     width: '100%',
     margin: 20,
     backgroundColor: "white",
@@ -307,14 +323,14 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    elevation: 10,
   },
   button: {
     borderRadius: 20,
     padding: 10,
-    elevation: 2
+    elevation: 10
   },
   buttonOpen: {
     backgroundColor: "#F194FF",
@@ -327,17 +343,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     paddingHorizontal: 20,
-    fontSize:15,
+    fontSize: 15,
   },
   textStyle1: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
     paddingHorizontal: 20,
-    fontSize:25,
-    fontWeight:'900',
-    textTransform:'uppercase',
-    marginBottom:20
+    fontSize: 25,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    marginBottom: 20
   },
   modalText: {
     marginBottom: 15,
