@@ -364,12 +364,21 @@
 // export default App;
 import { View, Text } from 'react-native'
 import React from 'react'
+import Home from './src/screen/Home'
+import { NativeBaseProvider, Box, StatusBar } from "native-base";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App = () => {
   return (
-    <View>
-      <Text>App</Text>
-    </View>
+    <>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {/* <StatusBar hidden /> */}
+        <NativeBaseProvider>
+          <Home />
+        </NativeBaseProvider>
+      </GestureHandlerRootView>
+
+    </>
   )
 }
 
