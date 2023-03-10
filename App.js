@@ -362,11 +362,17 @@
 // });
 
 // export default App;
-import { View, Text } from 'react-native'
+import { View, Text, ImageBackground } from 'react-native'
 import React from 'react'
 import Home from './src/screen/Home'
 import { NativeBaseProvider, Box, StatusBar } from "native-base";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { LogBox } from 'react-native';
+import List from './src/screen/List';
+import image from './src/assets/background1.jpg'
+import Subscription from './src/screen/Subscription';
+import Profile from './src/screen/Profile';
+LogBox.ignoreLogs(['new NativeEventEmitter']);
 
 const App = () => {
   return (
@@ -374,7 +380,13 @@ const App = () => {
       <GestureHandlerRootView style={{ flex: 1 }}>
         {/* <StatusBar hidden /> */}
         <NativeBaseProvider>
-          <Home />
+             <ImageBackground source={image} resizeMode="cover" style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'space-between'
+          }}>
+          <Profile />
+          </ImageBackground>
         </NativeBaseProvider>
       </GestureHandlerRootView>
 
