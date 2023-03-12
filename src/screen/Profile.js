@@ -1,13 +1,16 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import DrawerButton from '../component/DrawerButton';
 // import ArrowButton from '../CustomButtonMain/ArrowButton';
 // import OfferDetail from '../CustomPlan/OfferDetail';
 
 
-const ElicPlan = ({ navigation }) => {
+const Profile = ({ navigation }) => {
     return (
-        <View style={{flex:1}}>
+        <>
+     <DrawerButton onPress={() => navigation.toggleDrawer()} onPress1={() => navigation.navigate('Subscription')}/> 
+      <View style={{flex:1}}>
             {/* <ArrowButton onPress={() => navigation.navigate('Tab')} /> */}
             <Text style={styles.title}>
                 Plan
@@ -43,10 +46,11 @@ const ElicPlan = ({ navigation }) => {
 
 
         </View>
+        </>
     )
 }
 
-export default ElicPlan
+export default Profile
 
 const styles = StyleSheet.create({
     linearGradient: {

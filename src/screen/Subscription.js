@@ -2,9 +2,12 @@ import { View, } from 'react-native'
 import React from 'react'
 import { Box, Button, Text } from 'native-base'
 import RazorpayCheckout from 'react-native-razorpay'
+import DrawerButton from '../component/DrawerButton'
 
-const Subscription = () => {
+const Subscription = ({navigation}) => {
     return (
+        <>
+       <DrawerButton onPress={() => navigation.toggleDrawer()} onPress1={() => navigation.navigate('Subscription')}/>
         <Box flex='1' flexDirection='row' justifyContent='center' alignItems='center'>
             <Button
                 onPress={() => {
@@ -34,6 +37,7 @@ const Subscription = () => {
                 <Text>Default Small</Text>
             </Button>
         </Box>
+        </>
     )
 }
 

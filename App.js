@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useRef, useState } from "react";
 // import { Alert, Modal, StyleSheet, Platform, Text, Pressable, View, ImageBackground, Image, ActivityIndicator } from "react-native";
 // import RNSimpleOpenvpn, { addVpnStateListener, removeVpnStateListener } from 'react-native-simple-openvpn';
@@ -9,9 +8,6 @@
 // import { NetworkInfo } from 'react-native-network-info';
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { InterstitialAd, BannerAd, TestIds, BannerAdSize, AdEventType } from 'react-native-google-mobile-ads';
-
-
-
 
 // const isIPhone = Platform.OS === 'ios';
 // const Data = [
@@ -32,13 +28,11 @@
 //   },
 // ]
 
-
 // const App = () => {
 //   const [modalVisible, setModalVisible] = useState(false);
 //   const [log, setLog] = useState('');
 //   const logScrollView = useRef(null);
 //   const [status, _status] = useState(0)
-
 
 //   const adUnitId = __DEV__
 //     ? TestIds.BANNER
@@ -104,7 +98,6 @@
 //     setLog(`${log}${newLog}`);
 //   }
 
-
 //   const SaveDtat = async (value) => {
 //     await AsyncStorage.setItem('name', `${value}`);
 //   }
@@ -119,7 +112,6 @@
 //   useEffect(() => {
 //     GetDtat();
 //   }, [])
-
 
 //   useEffect(() => {
 //     let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
@@ -362,36 +354,51 @@
 // });
 
 // export default App;
-import { View, Text, ImageBackground } from 'react-native'
-import React from 'react'
-import Home from './src/screen/Home'
-import { NativeBaseProvider, Box, StatusBar } from "native-base";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { LogBox } from 'react-native';
+import {View, Text, ImageBackground} from 'react-native';
+import React from 'react';
+import Home from './src/screen/Home';
+import {NativeBaseProvider, Box, StatusBar} from 'native-base';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {LogBox} from 'react-native';
 import List from './src/screen/List';
-import image from './src/assets/background1.jpg'
+import image from './src/assets/background1.jpg';
 import Subscription from './src/screen/Subscription';
 import Profile from './src/screen/Profile';
+import AppStack from './src/navigation/Navigation';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 
 const App = () => {
+  const MyTheme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        background: 'transparent',
+        flex:1
+    },
+};
   return (
     <>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{flex: 1}}>
         {/* <StatusBar hidden /> */}
         <NativeBaseProvider>
-             <ImageBackground source={image} resizeMode="cover" style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          }}>
-          <Profile />
+          <ImageBackground
+            source={image}
+            resizeMode="cover"
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}>
+            <NavigationContainer  theme={MyTheme}>
+              <AppStack />
+            </NavigationContainer>
           </ImageBackground>
         </NativeBaseProvider>
       </GestureHandlerRootView>
-
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
