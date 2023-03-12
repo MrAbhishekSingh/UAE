@@ -1,5 +1,5 @@
 import {View, ImageBackground, TouchableOpacity, FlatList} from 'react-native';
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import image from '../assets/background1.jpg';
 import LinearGradient from 'react-native-linear-gradient';
 import {Avatar, Box, Text} from 'native-base';
@@ -8,15 +8,61 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GR from '../assets/ca.jpg';
 import DrawerButton from '../component/DrawerButton';
-let data = Array(100);
-const List = ({ navigation }) => {
+import {Data} from '../modal/Data';
+import {AuthContext} from '../navigation/AuthProvider';
+import firestore from '@react-native-firebase/firestore';
+
+const List = ({navigation}) => {
+  const {user} = useContext(AuthContext);
+  const [userData, setUserData] = useState('');
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          // console.log('User Data', documentSnapshot.data());
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
+  useEffect(() => {
+    if (user) {
+      getUser();
+    }
+  }, []);
+
+  const proplan = item => {
+    if (user) {
+      if (userData.plan_status) {
+        navigation.navigate('HomeMain', {
+          item: item,
+        });
+      } else {
+        navigation.navigate('Subscription');
+      }
+    } else {
+      navigation.navigate('Subscription');
+    }
+  };
+
+  const freeplan = item => {
+    navigation.navigate('HomeMain', {
+      item: item,
+    });
+  };
   return (
     <>
-     <DrawerButton onPress={() => navigation.toggleDrawer()} onPress1={() => navigation.navigate('Subscription')}/>
+      <DrawerButton
+        onPress={() => navigation.toggleDrawer()}
+        onPress1={() => navigation.navigate('Subscription')}
+      />
       <FlatList
-        data={data}
+        data={Data}
         renderItem={({item, index}) => (
           <TouchableOpacity
+            onPress={item.plan ?(()=> proplan(item)) :(()=> freeplan(item))}
             key={index}
             style={{
               backgroundColor: '#7dd3fc',
@@ -51,18 +97,28 @@ const List = ({ navigation }) => {
                 flexDirection="row"
                 justifyContent="space-between"
                 alignItems="center">
-                <Avatar bg="green.500" alignSelf="center" size="md" source={GR}>
+                <Avatar
+                  bg="green.500"
+                  alignSelf="center"
+                  size="md"
+                  source={item.flag}>
                   AJ
                 </Avatar>
-                <Text color="#fff" fontWeight="700" fontSize="20">
-                  USA
+                <Text width="25%" color="#fff" fontWeight="700" fontSize="20">
+                  {item.name}
                 </Text>
-                <MaterialCommunityIcons
-                  style={{margin: 3}}
-                  name="crown-outline"
-                  size={40}
-                  color="#fff"
-                />
+                {item.plan ? (
+                  <MaterialCommunityIcons
+                    style={{margin: 3}}
+                    name="crown-outline"
+                    size={40}
+                    color="#fff"
+                  />
+                ) : (
+                  <Text color="#07e689" fontWeight="700" fontSize="20">
+                    FREE
+                  </Text>
+                )}
                 <MaterialCommunityIcons
                   style={{margin: 3}}
                   name="signal"

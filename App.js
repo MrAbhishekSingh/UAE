@@ -365,7 +365,8 @@ import image from './src/assets/background1.jpg';
 import Subscription from './src/screen/Subscription';
 import Profile from './src/screen/Profile';
 import AppStack from './src/navigation/Navigation';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import {AuthProvider} from './src/navigation/AuthProvider';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 
@@ -373,11 +374,11 @@ const App = () => {
   const MyTheme = {
     ...DefaultTheme,
     colors: {
-        ...DefaultTheme.colors,
-        background: 'transparent',
-        flex:1
+      ...DefaultTheme.colors,
+      background: 'transparent',
+      flex: 1,
     },
-};
+  };
   return (
     <>
       <GestureHandlerRootView style={{flex: 1}}>
@@ -391,8 +392,10 @@ const App = () => {
               flexDirection: 'column',
               justifyContent: 'space-between',
             }}>
-            <NavigationContainer  theme={MyTheme}>
-              <AppStack />
+            <NavigationContainer theme={MyTheme}>
+              <AuthProvider>
+                <AppStack />
+              </AuthProvider>
             </NavigationContainer>
           </ImageBackground>
         </NativeBaseProvider>

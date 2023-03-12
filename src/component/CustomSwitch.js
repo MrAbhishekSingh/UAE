@@ -10,9 +10,9 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-export default function App() {
+export default function App({onSelectSwitch}) {
 
-    const positionButton = useRef(new Animated.Value(0)).current;
+    const positionButton = useRef(new Animated.Value(1)).current;
 
 
     const [isOn, setIsOn] = useState(false);
@@ -36,6 +36,10 @@ export default function App() {
 
     };
 
+    // const onSelectSwitch = () =>{
+    //     setIsOn(!isOn)
+    // }
+
     const positionInterPol = positionButton.interpolate({ inputRange: [0, 1], outputRange: [0, 90] })
 
     const backgroundColorAnim = positionButton.interpolate({ inputRange: [0, 1], outputRange: [0, 1] })
@@ -48,9 +52,11 @@ export default function App() {
         if (isOn) {
             startAnimToOff();
             setIsOn(false);
+            onSelectSwitch(1)
         } else {
             startAnimToOn();
             setIsOn(true);
+            onSelectSwitch(0)
         }
     };
 

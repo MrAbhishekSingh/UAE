@@ -1,5 +1,11 @@
-import {View, ImageBackground, TouchableOpacity} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {
+  View,
+  ImageBackground,
+  TouchableOpacity,
+  Platform,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import image from '../assets/background1.jpg';
 import {Avatar, Box, Button, Stack, Switch, Text, VStack} from 'native-base';
 import {G, Path} from 'react-native-svg';
@@ -12,37 +18,172 @@ import networkSpeed from 'react-native-network-speed';
 import img from '../assets/water.gif';
 import earth from '../assets/earth.gif';
 import DrawerButton from '../component/DrawerButton';
+import RNSimpleOpenvpn, {
+  addVpnStateListener,
+  removeVpnStateListener,
+} from 'react-native-simple-openvpn';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Home = ({navigation}) => {
+const isIPhone = Platform.OS === 'ios';
+
+const Home = ({route, navigation}) => {
+  // const {item} = route.params;
   const [speed, setSpeed] = useState('');
+  const [itemData, setItemData] = useState('');
+  const [log, setLog] = useState('');
+  const logScrollView = useRef(null);
+  const [status, _status] = useState(0);
 
-  const onSelectSwitch = index => {
-    networkSpeed.startListenNetworkSpeed(
-      ({
-        downLoadSpeed,
-        downLoadSpeedCurrent,
-        upLoadSpeed,
-        upLoadSpeedCurrent,
-      }) => {
-        setSpeed(downLoadSpeed);
-      },
-    );
-    // networkSpeed.stopListenNetworkSpeed()
+  useEffect(() => {
+    if (route.params) {
+      const {item} = route.params;
+      if (item) {
+        setItemData(item);
+        console.log('item', item);
+      }
+    }
+  }, [route.params]);
+  const onSelectSwitch = async index => {
+    if (index === 0) {
+      try {
+        await RNSimpleOpenvpn.disconnect();
+      } catch (error) {
+        updateLog(error);
+      }
+    }
+    if (index === 1) {
+      try {
+        await RNSimpleOpenvpn.connect({
+          remoteAddress: '',
+          ovpnFileName: 'Japan',
+          assetsPath: '',
+          notificationTitle: 'Uae Vpn',
+          compatMode: RNSimpleOpenvpn.CompatMode.OVPN_TWO_THREE_PEER,
+          providerBundleIdentifier: 'com.your.network.extension.bundle.id',
+          localizedDescription: 'go with uae vpn',
+        });
+      } catch (error) {
+        updateLog(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    networkSpeed.startListenNetworkSpeed(({downLoadSpeed}) => {
+      setSpeed(downLoadSpeed);
+    });
+  }, []);
+
+  useEffect(() => {
+    async function observeVpn() {
+      if (isIPhone) {
+        await RNSimpleOpenvpn.observeState();
+      }
+
+      addVpnStateListener(e => {
+        updateLog(JSON.stringify(e));
+        SaveDtat(e.state);
+        GetDtat();
+      });
+    }
+
+    observeVpn();
+
+    return async () => {
+      if (isIPhone) {
+        await RNSimpleOpenvpn.stopObserveState();
+      }
+
+      removeVpnStateListener();
+    };
+  });
+
+  async function Handler(value) {
+    try {
+      await RNSimpleOpenvpn.connect({
+        remoteAddress: '',
+        ovpnFileName: 'Japan',
+        assetsPath: '',
+        notificationTitle: 'Uae Vpn',
+        compatMode: RNSimpleOpenvpn.CompatMode.OVPN_TWO_THREE_PEER,
+        providerBundleIdentifier: 'com.your.network.extension.bundle.id',
+        localizedDescription: 'go with uae vpn',
+      });
+    } catch (error) {
+      updateLog(error);
+    }
+  }
+
+  function printVpnState() {
+    updateLog(JSON.stringify(RNSimpleOpenvpn.VpnState, undefined, 2));
+  }
+
+  function updateLog(newLog) {
+    const now = new Date().toLocaleTimeString();
+    setLog(`${log}${newLog}`);
+  }
+
+  const SaveDtat = async value => {
+    await AsyncStorage.setItem('name', `${value}`);
+  };
+  const GetDtat = async () => {
+    await AsyncStorage.getItem('name').then(name => {
+      if (name) {
+        _status(name);
+      }
+    });
   };
   useEffect(() => {
-    console.log(speed);
-  }, [speed]);
+    if (itemData) {
+      Handler(itemData.name);
+    }
+  }, [itemData]);
 
-  console.log('asfasfsafasf', speed);
   return (
     <>
-    <DrawerButton onPress={() => navigation.toggleDrawer()} onPress1={() => navigation.navigate('Subscription')}/><VStack justifyContent="center" alignItems="center" height="50%">
+      <DrawerButton
+        onPress={() => navigation.toggleDrawer()}
+        onPress1={() => navigation.navigate('Subscription')}
+      />
+      <VStack justifyContent="center" alignItems="center" height="50%">
         <Box
           flexDirection="row"
           justifyContent="space-between"
           alignItems="center"
-          width="33%">
-          <Fontisto
+          width="35%">
+          {status == 0 ? (
+            <>
+              <Icon
+                style={{margin: 3}}
+                name="disconnect"
+                size={20}
+                color="#22c55e"
+              />
+              <Text color="#fff" fontWeight="700" fontSize="20">
+                Disconnected
+              </Text>
+            </>
+          ) : status == 1 ? (
+            <>
+              <ActivityIndicator size="large" color="#00ff00" />
+              <Text color="#fff" fontWeight="700" fontSize="20">
+                Connecting
+              </Text>
+            </>
+          ) : (
+            <>
+              <Fontisto
+                style={{margin: 3}}
+                name="angle-dobule-up"
+                size={20}
+                color="#22c55e"
+              />
+              <Text color="#fff" fontWeight="700" fontSize="20">
+                Download
+              </Text>
+            </>
+          )}
+          {/* <Fontisto
             style={{margin: 3}}
             name="angle-dobule-up"
             size={20}
@@ -50,7 +191,7 @@ const Home = ({navigation}) => {
           />
           <Text color="#fff" fontWeight="700" fontSize="20">
             Download
-          </Text>
+          </Text> */}
         </Box>
         <Text color="#fff" fontWeight="900" fontSize="70">
           {speed ? (speed / 1000).toFixed(2) : 0}
@@ -59,7 +200,6 @@ const Home = ({navigation}) => {
           mb/s
         </Text>
         <TouchableOpacity
-          onPress={onSelectSwitch}
           style={{
             backgroundColor: '#7dd3fc',
             borderRadius: 10,
@@ -82,8 +222,7 @@ const Home = ({navigation}) => {
           <LinearGradient
             colors={['#4c669f', '#3b5998', '#192f6a']}
             style={{borderRadius: 10, padding: 10, width: '100%'}}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('List')}>
+            <TouchableOpacity onPress={() => navigation.navigate('List')}>
               <Box
                 flexDirection="row"
                 justifyContent="space-between"
@@ -111,7 +250,7 @@ const Home = ({navigation}) => {
             roundCorner={true}
             option1={'First'}
             option2={'Second'}
-            // onSelectSwitch={onSelectSwitch}
+            onSelectSwitch={onSelectSwitch}
           />
         </VStack>
       </LinearGradient>

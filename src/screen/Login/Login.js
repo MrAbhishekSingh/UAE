@@ -15,36 +15,25 @@ import {styles} from './style';
 import Inputbox from '../../component/InputBox/Inputbox';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Button} from 'native-base';
+import { AuthContext } from '../../navigation/AuthProvider';
 
 const Login = ({navigation}) => {
-  // const { register } = useContext(AuthContext)
-  const handleSubmit = (values, actions) => {
-    actions.resetForm();
-    // register(values.name, values.email, values.password,)
-    // Alert.alert('user scusess')
-    // navigation.navigate('Intro', {
-    //     name: values.name,
-    //     email: values.email,
-    //     password: values.password,
-    // });
-  };
+    const { login } = useContext(AuthContext)
+    const handleSubmit = (values, actions) => {
+        actions.resetForm();
+        login(values.email, values.password)
+    }
 
   const logiSchema = yup.object().shape({
-    email: yup.string().email().required('Email is a required field'),
+    email: yup
+        .string()
+        .email()
+        .required("Email is a required field"),
     password: yup
-      .string()
-      .required('Please enter your password.')
-      .min(8, 'Your password is too short.'),
-    retypePassword: yup
-      .string()
-      .required('Please confirm your password.')
-      .oneOf([yup.ref('password')], 'Your passwords do not match.'),
-    name: yup
-      .string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Please enter your name'),
-  });
+        .string()
+        .required('Please enter your password.')
+        .min(8, 'Your password is too short.'),
+})
   return (
     <>
       <LinearGradient
@@ -52,12 +41,7 @@ const Login = ({navigation}) => {
         style={styles.linearGradient}>
         <Formik
           validationSchema={logiSchema}
-          initialValues={{
-            email: '',
-            password: '',
-            retypePassword: '',
-            name: '',
-          }}
+          initialValues={{ email: '', password: '' }}
           onSubmit={handleSubmit}>
           {({handleChange, handleSubmit, values, touched, errors}) => (
             <>
@@ -99,7 +83,7 @@ const Login = ({navigation}) => {
                       secureTextEntry={true}
                     />
                     <View style={styles.btncontainer}>
-                      <TouchableOpacity style={{elevation: 5, justifyContent: 'center',
+                      <TouchableOpacity onPress={handleSubmit} style={{elevation: 5, justifyContent: 'center',
                             alignItems:'center',
                             flexDirection: 'row',}}>
                         <LinearGradient

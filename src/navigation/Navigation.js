@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {View, Text, Alert} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -15,28 +15,30 @@ import Subscription from '../screen/Subscription';
 import Speedtest from '../screen/Speedtest';
 import SignUp from '../screen/SignUp/SignUp';
 import Login from '../screen/Login/Login';
+import {AuthContext} from './AuthProvider';
+import auth from '@react-native-firebase/auth';
 
 function CustomDrawerContent(props) {
-  // const {user, logout} = useContext(AuthContext);
+  const {user, logout} = React.useContext(AuthContext);
   const onPress = () => {
     Alert.alert(
       'Log out',
       'Do you want to logout?',
-      // [
-      //   {
-      //     text: 'Cancel',
-      //     onPress: () => {
-      //       return null;
-      //     },
-      //   },
-      //   {
-      //     text: 'Confirm',
-      //     onPress: () => {
-      //       logout();
-      //     },
-      //   },
-      // ],
-      // {cancelable: false},
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            return null;
+          },
+        },
+        {
+          text: 'Confirm',
+          onPress: () => {
+            logout();
+          },
+        },
+      ],
+      {cancelable: false},
     );
   };
 
@@ -66,19 +68,45 @@ function StackNav({route, navigation}) {
 }
 
 export default function AppStack() {
+  const {user, setUser} = React.useContext(AuthContext);
+  const [initializing, setInitializing] = React.useState(true);
+
+  const onAuthStateChanged = user => {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  };
+  React.useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  if (initializing) return null;
   return (
     <>
-      <Drawer.Navigator
-        screenOptions={{headerShown: false}}
-        drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Home" component={StackNav} />
-        <Drawer.Screen name="List" component={List} />
-        <Drawer.Screen name="Profile" component={Profile} />
-        <Drawer.Screen name="Subscription" component={Subscription} />
-        <Drawer.Screen name="Speedtest" component={Speedtest} />
-        <Drawer.Screen name="SignUp" component={SignUp} />
-        <Drawer.Screen name="Login" component={Login} />
-      </Drawer.Navigator>
+      {user ? (
+        <>
+          <Drawer.Navigator
+            screenOptions={{headerShown: false}}
+            drawerContent={props => <CustomDrawerContent {...props} />}>
+            <Drawer.Screen name="Home" component={StackNav} />
+            <Drawer.Screen name="List" component={List} />
+            <Drawer.Screen name="Profile" component={Profile} />
+            <Drawer.Screen name="Subscription" component={Subscription} />
+            <Drawer.Screen name="Speedtest" component={Speedtest} />
+          </Drawer.Navigator>
+        </>
+      ) : (
+        <>
+          <Drawer.Navigator screenOptions={{headerShown: false}}>
+            <Drawer.Screen name="Home" component={StackNav} />
+            <Drawer.Screen name="List" component={List} />
+            <Drawer.Screen name="Subscription" component={Subscription} />
+            <Drawer.Screen name="Speedtest" component={Speedtest} />
+            <Drawer.Screen name="SignUp" component={SignUp} />
+            <Drawer.Screen name="Login" component={Login} />
+          </Drawer.Navigator>
+        </>
+      )}
     </>
   );
 }

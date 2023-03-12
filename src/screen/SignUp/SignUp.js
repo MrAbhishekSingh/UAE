@@ -15,18 +15,14 @@ import {styles} from './style';
 import Inputbox from '../../component/InputBox/Inputbox';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Button} from 'native-base';
+import { AuthContext } from '../../navigation/AuthProvider';
 
 const SignUp = ({navigation}) => {
-  // const { register } = useContext(AuthContext)
+  const { register } = useContext(AuthContext)
   const handleSubmit = (values, actions) => {
-    actions.resetForm();
-    // register(values.name, values.email, values.password,)
-    // Alert.alert('user scusess')
-    // navigation.navigate('Intro', {
-    //     name: values.name,
-    //     email: values.email,
-    //     password: values.password,
-    // });
+    // actions.resetForm();
+    register(values.name, values.email, values.password,values.phone)
+
   };
 
   const logiSchema = yup.object().shape({
@@ -57,6 +53,7 @@ const SignUp = ({navigation}) => {
             password: '',
             retypePassword: '',
             name: '',
+            phone:+918892004977
           }}
           onSubmit={handleSubmit}>
           {({handleChange, handleSubmit, values, touched, errors}) => (
@@ -113,7 +110,7 @@ const SignUp = ({navigation}) => {
                       secureTextEntry={true}
                     />
                     <View style={styles.btncontainer}>
-                      <TouchableOpacity style={{elevation: 5, justifyContent: 'center',
+                      <TouchableOpacity onPress={handleSubmit}  style={{elevation: 5, justifyContent: 'center',
                             alignItems:'center',
                             flexDirection: 'row',}}>
                         <LinearGradient
