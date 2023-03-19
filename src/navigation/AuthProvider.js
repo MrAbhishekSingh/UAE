@@ -1,4 +1,4 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -7,10 +7,35 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState('');
+  const [userAllData, setMyData] = useState({});
+  const getData = async () => {
+    if (user !== null) {
+      if (Object.keys(user).length > 0) {
+        try {
+          await firestore()
+            .collection('users')
+            .doc(user.uid)
+            .get()
+            .then(documentSnapshot => {
+              if (documentSnapshot.exists) {
+                // console.log('User Data', documentSnapshot.data());
+                setMyData(documentSnapshot.data());
+              }
+            });
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, [user]);
 
   return (
     <AuthContext.Provider
       value={{
+        userAllData,
         user,
         setUser,
         login: async (email, password) => {
@@ -20,10 +45,10 @@ export const AuthProvider = ({children}) => {
             Alert.alert('please enter valid email and password');
           }
         },
-        register: async (name, email, password,phone) => {
+        register: async (name, email, password, phone, country) => {
           try {
             await auth()
-              .createUserWithEmailAndPassword(email, password,phone)
+              .createUserWithEmailAndPassword(email, password, phone)
               .then(() => {
                 firestore()
                   .collection('users')
@@ -31,12 +56,15 @@ export const AuthProvider = ({children}) => {
                   .set({
                     uid: auth().currentUser.uid,
                     displayName: name,
-                    phone:phone,
+                    phone: phone,
                     email: email,
+                    country: country,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
-                    plan_CreatedAt: null,
+                    plan_CreatedAt_start: null,
+                    plan_CreatedAt_end: null,
                     plan_status: null,
-                    plan_Type:null,
+                    plan_details_id: null,
+                    plan_Type: null,
                   })
                   .catch(error => {
                     console.log(
@@ -44,9 +72,8 @@ export const AuthProvider = ({children}) => {
                       error,
                     );
                   });
-              }).then((scusess)=>(
-                Alert.alert('user scusess')
-              ))
+              })
+              .then(scusess => Alert.alert('user scusess'))
               .catch(error => {
                 console.log('Something went wrong with sign up: ', error);
               });
@@ -57,6 +84,7 @@ export const AuthProvider = ({children}) => {
         logout: async () => {
           try {
             await auth().signOut();
+            setMyData({});
           } catch (e) {
             console.log(e);
           }

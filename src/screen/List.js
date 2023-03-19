@@ -13,7 +13,7 @@ import {AuthContext} from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 
 const List = ({navigation}) => {
-  const {user} = useContext(AuthContext);
+  const {user, userAllData} = useContext(AuthContext);
   const [userData, setUserData] = useState('');
   const getUser = async () => {
     await firestore()
@@ -32,10 +32,15 @@ const List = ({navigation}) => {
       getUser();
     }
   }, []);
+  const output1 = new Date(userAllData.plan_CreatedAt_end.seconds * 1000);
+  expireDate = output1.toISOString().substring(0, 10);
 
   const proplan = item => {
     if (user) {
-      if (userData.plan_status) {
+      if (
+        userAllData.plan_CreatedAt_end !== null &&
+        userAllData.plan_CreatedAt_end !== ''
+      ) {
         navigation.navigate('HomeMain', {
           item: item,
         });
@@ -52,6 +57,7 @@ const List = ({navigation}) => {
       item: item,
     });
   };
+
   return (
     <>
       <DrawerButton
@@ -62,7 +68,7 @@ const List = ({navigation}) => {
         data={Data}
         renderItem={({item, index}) => (
           <TouchableOpacity
-            onPress={item.plan ?(()=> proplan(item)) :(()=> freeplan(item))}
+            onPress={item.plan ? () => proplan(item) : () => freeplan(item)}
             key={index}
             style={{
               backgroundColor: '#7dd3fc',
@@ -112,7 +118,7 @@ const List = ({navigation}) => {
                     style={{margin: 3}}
                     name="crown-outline"
                     size={40}
-                    color="#fff"
+                    color={userAllData.plan_CreatedAt_end ? '#07e689' : '#fff'}
                   />
                 ) : (
                   <Text color="#07e689" fontWeight="700" fontSize="20">

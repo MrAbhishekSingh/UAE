@@ -33,6 +33,7 @@ const Home = ({route, navigation}) => {
   const [log, setLog] = useState('');
   const logScrollView = useRef(null);
   const [status, _status] = useState(0);
+  const [current, setCurrent] = useState(false);
 
   useEffect(() => {
     if (route.params) {
@@ -55,7 +56,7 @@ const Home = ({route, navigation}) => {
       try {
         await RNSimpleOpenvpn.connect({
           remoteAddress: '',
-          ovpnFileName: 'Japan',
+          ovpnFileName: itemData.name,
           assetsPath: '',
           notificationTitle: 'Uae Vpn',
           compatMode: RNSimpleOpenvpn.CompatMode.OVPN_TWO_THREE_PEER,
@@ -98,21 +99,21 @@ const Home = ({route, navigation}) => {
     };
   });
 
-  async function Handler(value) {
-    try {
-      await RNSimpleOpenvpn.connect({
-        remoteAddress: '',
-        ovpnFileName: 'Japan',
-        assetsPath: '',
-        notificationTitle: 'Uae Vpn',
-        compatMode: RNSimpleOpenvpn.CompatMode.OVPN_TWO_THREE_PEER,
-        providerBundleIdentifier: 'com.your.network.extension.bundle.id',
-        localizedDescription: 'go with uae vpn',
-      });
-    } catch (error) {
-      updateLog(error);
-    }
-  }
+  // async function Handler(value) {
+  //   try {
+  //     await RNSimpleOpenvpn.connect({
+  //       remoteAddress: '',
+  //       ovpnFileName: 'Japan',
+  //       assetsPath: '',
+  //       notificationTitle: 'Uae Vpn',
+  //       compatMode: RNSimpleOpenvpn.CompatMode.OVPN_TWO_THREE_PEER,
+  //       providerBundleIdentifier: 'com.your.network.extension.bundle.id',
+  //       localizedDescription: 'go with uae vpn',
+  //     });
+  //   } catch (error) {
+  //     updateLog(error);
+  //   }
+  // }
 
   function printVpnState() {
     updateLog(JSON.stringify(RNSimpleOpenvpn.VpnState, undefined, 2));
@@ -133,9 +134,15 @@ const Home = ({route, navigation}) => {
       }
     });
   };
+
+  const disConnect = async () => {
+    await RNSimpleOpenvpn.disconnect();
+  };
   useEffect(() => {
+    setCurrent(false);
     if (itemData) {
-      Handler(itemData.name);
+      disConnect();
+      setCurrent(true);
     }
   }, [itemData]);
 
@@ -229,7 +236,7 @@ const Home = ({route, navigation}) => {
                 alignItems="center">
                 <Fontisto name="earth" size={20} color="#fff" />
                 <Text color="#fff" fontWeight="700" fontSize="20">
-                  USA
+                  {itemData.name}
                 </Text>
                 <Icon name="right" size={20} color="#fff" />
               </Box>
@@ -246,6 +253,7 @@ const Home = ({route, navigation}) => {
           alignItems="center"
           justifyContent="center">
           <CustomSwitch
+            current={current}
             selectionMode={1}
             roundCorner={true}
             option1={'First'}

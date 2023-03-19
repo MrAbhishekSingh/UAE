@@ -62,7 +62,7 @@ function StackNav({route, navigation}) {
       <Stack.Screen name="List" component={List} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Subscription" component={Subscription} />
-      <Stack.Screen name="Speedtest" component={Speedtest} />
+      {/* <Stack.Screen name="Speedtest" component={Speedtest} /> */}
     </Stack.Navigator>
   );
 }
@@ -92,7 +92,7 @@ export default function AppStack() {
             <Drawer.Screen name="List" component={List} />
             <Drawer.Screen name="Profile" component={Profile} />
             <Drawer.Screen name="Subscription" component={Subscription} />
-            <Drawer.Screen name="Speedtest" component={Speedtest} />
+            {/* <Drawer.Screen name="Speedtest" component={Speedtest} /> */}
           </Drawer.Navigator>
         </>
       ) : (
@@ -101,7 +101,7 @@ export default function AppStack() {
             <Drawer.Screen name="Home" component={StackNav} />
             <Drawer.Screen name="List" component={List} />
             <Drawer.Screen name="Subscription" component={Subscription} />
-            <Drawer.Screen name="Speedtest" component={Speedtest} />
+            {/* <Drawer.Screen name="Speedtest" component={Speedtest} /> */}
             <Drawer.Screen name="SignUp" component={SignUp} />
             <Drawer.Screen name="Login" component={Login} />
           </Drawer.Navigator>

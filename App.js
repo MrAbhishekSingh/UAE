@@ -369,6 +369,7 @@ import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {AuthProvider} from './src/navigation/AuthProvider';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
+LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 
 const App = () => {
   const MyTheme = {
