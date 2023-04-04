@@ -370,6 +370,7 @@ import {AuthProvider} from './src/navigation/AuthProvider';
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
 
 const App = () => {
   const MyTheme = {
@@ -386,7 +387,7 @@ const App = () => {
         {/* <StatusBar hidden /> */}
         <NativeBaseProvider>
           <ImageBackground
-            source={image}
+            source={{uri:'https://i.pinimg.com/236x/65/61/06/6561067e34e3eb63135ec42397fabc45.jpg'}}
             resizeMode="cover"
             style={{
               flex: 1,

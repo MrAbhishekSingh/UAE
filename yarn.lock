@@ -7520,6 +7520,16 @@ rn-country-dropdown-picker@^2.1.8:
   resolved "https://registry.yarnpkg.com/rn-country-dropdown-picker/-/rn-country-dropdown-picker-2.1.8.tgz#fc2aef98f9328d18fea75a86912b5b53c2eb2994"
   integrity sha512-TMZSCDP/c+qjAiZbwb8acGMeux6llJ2jAHDNR2lxnhOPxr9JUzBpp1V29arbXBInd0nVVwgjVoXPKNUJ6pl69g==
 
+rn-slide-button@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/rn-slide-button/-/rn-slide-button-1.0.3.tgz#2573cb4e1f9645543b5dc6bfe4d5b473aa419eea"
+  integrity sha512-quzZNfvNkJ3rTPCTiz5WOezkJoErP3bTiyofOFf4lrpNWPpL2Dt1mXPzxzUC8hYHNl6BQaYuF5VLGL5SIod5Cw==
+
+rn-sliding-button@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/rn-sliding-button/-/rn-sliding-button-1.1.5.tgz#4cf6764bbbfc5aae46e04fe9cd3f021f6b25250b"
+  integrity sha512-hvejAJgSXMCRm/QRrbdX0BzV2mZcjO12GNPBbWyUX7QuBNLZpeGuKCF8UTSVGUIOO6C1kfkeAjkNvOs+g8kU0w==
+
 rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"

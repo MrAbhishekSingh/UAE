@@ -88,7 +88,7 @@ export default function AppStack() {
           <Drawer.Navigator
             screenOptions={{headerShown: false}}
             drawerContent={props => <CustomDrawerContent {...props} />}>
-            <Drawer.Screen name="Home" component={StackNav} />
+            <Drawer.Screen name="HomeMain" component={Home} />
             <Drawer.Screen name="List" component={List} />
             <Drawer.Screen name="Profile" component={Profile} />
             <Drawer.Screen name="Subscription" component={Subscription} />
@@ -98,7 +98,7 @@ export default function AppStack() {
       ) : (
         <>
           <Drawer.Navigator screenOptions={{headerShown: false}}>
-            <Drawer.Screen name="Home" component={StackNav} />
+            <Drawer.Screen name="HomeMain" component={Home} />
             <Drawer.Screen name="List" component={List} />
             <Drawer.Screen name="Subscription" component={Subscription} />
             {/* <Drawer.Screen name="Speedtest" component={Speedtest} /> */}
