@@ -20,8 +20,10 @@
     "@react-navigation/stack": "^6.3.16",
     "formik": "^2.2.9",
     "native-base": "^3.4.28",
+    "patch-package": "^6.5.1",
     "react": "18.1.0",
     "react-native": "0.70.6",
+    "react-native-axios": "^0.17.1",
     "react-native-flags": "^1.0.0",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-google-mobile-ads": "^8.2.2",
@@ -36,6 +38,7 @@
     "react-native-simple-openvpn": "^2.0.0",
     "react-native-svg": "12.1.1",
     "react-native-vector-icons": "^9.2.0",
+    "react-native-vpn-ipsec": "^1.1.0",
     "rn-country-dropdown-picker": "^2.1.8",
     "rn-sliding-button": "^1.1.5",
     "yup": "^1.0.2"

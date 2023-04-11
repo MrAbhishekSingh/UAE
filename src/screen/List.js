@@ -4,12 +4,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Avatar, Box, Text } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DrawerButton from '../component/DrawerButton';
-import { Data } from '../modal/Data';
 import { AuthContext } from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
+import axios from 'react-native-axios'
+import { InterstitialAd, BannerAd, TestIds, BannerAdSize, AdEventType } from 'react-native-google-mobile-ads';
 
 const List = ({ navigation }) => {
   const { user, userAllData } = useContext(AuthContext);
+  const [data, setData] = useState([])
   const [userData, setUserData] = useState('');
   const getUser = async () => {
     await firestore()
@@ -22,11 +24,32 @@ const List = ({ navigation }) => {
         }
       });
   };
+  const adUnitId = __DEV__
+    ? 'ca-app-pub-5136668440114711/9841925955'
+    : 'ca-app-pub-5136668440114711/9841925955';
+
+
   useEffect(() => {
     if (user) {
       getUser();
     }
   }, []);
+
+
+  const getData = async () => {
+    await axios.get('https://thefind.tech/api/hello')
+      .then(function (response) {
+        setData(response.data);
+        console.log(typeof response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+  }
+  useEffect(() => {
+    getData()
+  }, [])
 
 
   const proplan = item => {
@@ -59,7 +82,7 @@ const List = ({ navigation }) => {
         onPress1={() => navigation.navigate('Subscription')}
       />
       <FlatList
-        data={Data}
+        data={data}
         renderItem={({ item, index }) => (
           <>
             <TouchableOpacity
@@ -108,7 +131,7 @@ const List = ({ navigation }) => {
                   >
                     AJ
                   </Avatar>
-                  <Text width="30%" color="#fff" fontWeight="700" fontSize="20">
+                  <Text width="35%" color="#fff" fontWeight="700" fontSize="20">
                     {item.name}
                   </Text>
                   {item.plan ? (
@@ -132,6 +155,43 @@ const List = ({ navigation }) => {
                 </Box>
               </LinearGradient>
             </TouchableOpacity>
+            {user ?
+              <>
+                {userAllData?.plan_CreatedAt_end &&  Object.keys(userAllData?.plan_CreatedAt_end).length > 0
+                  ?
+                  null
+                  :
+                  <Box style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <BannerAd
+                      unitId={adUnitId}
+                      size={BannerAdSize.BANNER}
+                      requestOptions={{
+                        requestNonPersonalizedAdsOnly: true,
+                      }}
+                    />
+                  </Box>
+                }
+              </> :
+              <Box style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <BannerAd
+                  unitId={adUnitId}
+                  size={BannerAdSize.BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+                />
+              </Box>
+            }
           </>
         )}
       />

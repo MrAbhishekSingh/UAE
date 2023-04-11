@@ -20,15 +20,50 @@ import RNSimpleOpenvpn, {
 } from 'react-native-simple-openvpn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RNSlidingButton, SlideDirection } from 'rn-sliding-button';
+import {
+  CharonErrorState,
+  VpnState,
+  connect,
+  disconnect,
+  getCharonErrorState,
+  getCurrentState,
+  onStateChangedListener,
+  prepare,
+} from 'react-native-vpn-ipsec';
+import { InterstitialAd, BannerAd, TestIds, BannerAdSize, AdEventType } from 'react-native-google-mobile-ads';
+import { AuthContext } from '../navigation/AuthProvider';
+import { useContext } from 'react';
 
 const isIPhone = Platform.OS === 'ios';
 
 const Home = ({ route, navigation }) => {
+  const { user, userAllData } = useContext(AuthContext);
   const [speed, setSpeed] = useState('');
   const [itemData, setItemData] = useState({});
   const [log, setLog] = useState('');
   const [status, _status] = useState(0);
   const isMounted = useRef(true);
+  const [state, setState] = useState(VpnState[VpnState.disconnected]);
+  const [charonState, setCharonState] = useState(
+    CharonErrorState[CharonErrorState.NO_ERROR],
+  );
+
+  const adUnitId = __DEV__
+    ? 'ca-app-pub-5136668440114711/9841925955'
+    : 'ca-app-pub-5136668440114711/9841925955';
+
+  useEffect(() => {
+    prepare()
+      .then(() => console.log('prepared'))
+      .catch(err => {
+        console.log(err);
+      });
+    onStateChangedListener(e => {
+      SaveDtat(e.state);
+      setState(VpnState[e.state]);
+      setCharonState(CharonErrorState[e.charonState]);
+    });
+  }, []);
 
   useEffect(() => {
     Dataget()
@@ -43,29 +78,28 @@ const Home = ({ route, navigation }) => {
       }
     }
   }
-
   const onSelectSwitch = async index => {
     try {
       if (Object.keys(itemData).length > 0) {
-        await RNSimpleOpenvpn.connect({
-          remoteAddress: '5.181.234.131 1194',
-          ovpnFileName: itemData?.name,
-          assetsPath: '',
-          notificationTitle: 'Uae Vpn',
-          compatMode: RNSimpleOpenvpn.CompatMode.OVPN_TWO_THREE_PEER,
-          providerBundleIdentifier: 'com.your.network.extension.bundle.id',
-          localizedDescription: 'go with uae vpn',
-        });
+        connect({ name: 'Abhishek', type: 'ikev2', },
+          itemData.address,
+          itemData.username,
+          itemData.password,
+          '',
+          false,
+        ).then(data => {
+          console.log('data', data);
+        })
       } else {
-        await RNSimpleOpenvpn.connect({
-          remoteAddress: '',
-          ovpnFileName: 'Japan',
-          assetsPath: '',
-          notificationTitle: 'Uae Vpn',
-          compatMode: RNSimpleOpenvpn.CompatMode.OVPN_TWO_THREE_PEER,
-          providerBundleIdentifier: 'com.your.network.extension.bundle.id',
-          localizedDescription: 'go with uae vpn',
-        });
+        connect({ name: 'Abhishek', type: 'ikev2', },
+          'lux-152-ike.whiskergalaxy.com',
+          '64pjyv8h-d26sazf',
+          'vkhgb869nj',
+          '',
+          false,
+        ).then(data => {
+          console.log('data', data);
+        })
 
       }
     } catch (error) {
@@ -75,7 +109,9 @@ const Home = ({ route, navigation }) => {
   };
   const offSelectSwitch = async index => {
     try {
-      await RNSimpleOpenvpn.disconnect();
+      disconnect()
+        .then(() => console.log('disconnect: '))
+        .catch(console.log)
     } catch (error) {
       updateLog(error);
     }
@@ -159,6 +195,43 @@ const Home = ({ route, navigation }) => {
         onPress1={() => navigation.navigate('Subscription')}
       />
       <VStack justifyContent="center" alignItems="center" height="50%">
+         {user ?
+          <>
+            {userAllData?.plan_CreatedAt_end && Object.keys(userAllData?.plan_CreatedAt_end).length > 0
+              ?
+              null
+              :
+              <Box style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <BannerAd
+                  unitId={adUnitId}
+                  size={BannerAdSize.BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+                />
+              </Box>
+            }
+          </> :
+          <Box style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <BannerAd
+              unitId={adUnitId}
+              size={BannerAdSize.BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+            />
+          </Box>
+        }
         <Box
           flexDirection="row"
           justifyContent="space-between"
@@ -192,19 +265,10 @@ const Home = ({ route, navigation }) => {
                 color="#22c55e"
               />
               <Text color="#fff" fontWeight="700" fontSize="20">
-                Download
+                connected
               </Text>
             </>
           )}
-          {/* <Fontisto
-            style={{margin: 3}}
-            name="angle-dobule-up"
-            size={20}
-            color="#22c55e"
-          />
-          <Text color="#fff" fontWeight="700" fontSize="20">
-            Download
-          </Text> */}
         </Box>
         <Text color="#fff" fontWeight="900" fontSize="70">
           {speed ? (speed / 1000).toFixed(2) : 0}
@@ -226,7 +290,7 @@ const Home = ({ route, navigation }) => {
               width: 0,
               height: 1,
             },
-            width: '40%',
+            width: '50%',
             shadowOpacity: 0.22,
             shadowRadius: 2.22,
             elevation: 10,
@@ -250,6 +314,43 @@ const Home = ({ route, navigation }) => {
           </LinearGradient>
         </TouchableOpacity>
       </VStack>
+      {user ?
+        <>
+          {userAllData?.plan_CreatedAt_end && Object.keys(userAllData?.plan_CreatedAt_end).length > 0
+            ?
+            null
+            :
+            <Box style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <BannerAd
+                unitId={adUnitId}
+                size={BannerAdSize.BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: true,
+                }}
+              />
+            </Box>
+          }
+        </> :
+        <Box style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <BannerAd
+            unitId={adUnitId}
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
+        </Box>
+      }
       <LinearGradient
         colors={['transparent', '#0369a1', '#7dd3fc']}
         style={{ height: '40%', }}>
@@ -274,7 +375,45 @@ const Home = ({ route, navigation }) => {
               </Text>
             </View>
           </RNSlidingButton>
+          {user ?
+            <>
+              {userAllData?.plan_CreatedAt_end && Object.keys(userAllData?.plan_CreatedAt_end).length > 0
+                ?
+                null
+                :
+                <Box style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <BannerAd
+                    unitId={adUnitId}
+                    size={BannerAdSize.BANNER}
+                    requestOptions={{
+                      requestNonPersonalizedAdsOnly: true,
+                    }}
+                  />
+                </Box>
+              }
+            </> :
+            <Box style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <BannerAd
+                unitId={adUnitId}
+                size={BannerAdSize.BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: true,
+                }}
+              />
+            </Box>
+          }
         </VStack>
+
       </LinearGradient>
     </>
   );
