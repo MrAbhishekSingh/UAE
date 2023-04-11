@@ -8,37 +8,26 @@ import {
   StyleSheet,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import image from '../assets/background1.jpg';
-import { Avatar, Box, Button, Stack, Switch, Text, VStack } from 'native-base';
-import { G, Path } from 'react-native-svg';
+import { Box, Text, VStack } from 'native-base';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CustomSwitch from '../component/CustomSwitch';
 import LinearGradient from 'react-native-linear-gradient';
 import networkSpeed from 'react-native-network-speed';
-import img from '../assets/water.gif';
-import earth from '../assets/earth.gif';
 import DrawerButton from '../component/DrawerButton';
 import RNSimpleOpenvpn, {
   addVpnStateListener,
   removeVpnStateListener,
 } from 'react-native-simple-openvpn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SlideButton from 'rn-slide-button';
 import { RNSlidingButton, SlideDirection } from 'rn-sliding-button';
 
 const isIPhone = Platform.OS === 'ios';
 
 const Home = ({ route, navigation }) => {
-  // const {item} = route.params;
   const [speed, setSpeed] = useState('');
   const [itemData, setItemData] = useState({});
   const [log, setLog] = useState('');
-  const logScrollView = useRef(null);
   const [status, _status] = useState(0);
-  const [current, setCurrent] = useState(false);
-  const [isOn, setIsOn] = useState(false);
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -161,10 +150,6 @@ const Home = ({ route, navigation }) => {
   useEffect(() => {
     GetDtat()
   }, [])
-
-  const disConnect = async () => {
-    await RNSimpleOpenvpn.disconnect();
-  };
 
 
   return (

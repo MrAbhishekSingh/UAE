@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {View, Text, Alert} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import { Alert} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   createDrawerNavigator,
@@ -12,7 +11,6 @@ import Home from '../screen/Home';
 import List from '../screen/List';
 import Profile from '../screen/Profile';
 import Subscription from '../screen/Subscription';
-import Speedtest from '../screen/Speedtest';
 import SignUp from '../screen/SignUp/SignUp';
 import Login from '../screen/Login/Login';
 import {AuthContext} from './AuthProvider';
@@ -62,7 +60,6 @@ function StackNav({route, navigation}) {
       <Stack.Screen name="List" component={List} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Subscription" component={Subscription} />
-      {/* <Stack.Screen name="Speedtest" component={Speedtest} /> */}
     </Stack.Navigator>
   );
 }
@@ -92,7 +89,6 @@ export default function AppStack() {
             <Drawer.Screen name="List" component={List} />
             <Drawer.Screen name="Profile" component={Profile} />
             <Drawer.Screen name="Subscription" component={Subscription} />
-            {/* <Drawer.Screen name="Speedtest" component={Speedtest} /> */}
           </Drawer.Navigator>
         </>
       ) : (
@@ -101,7 +97,6 @@ export default function AppStack() {
             <Drawer.Screen name="HomeMain" component={Home} />
             <Drawer.Screen name="List" component={List} />
             <Drawer.Screen name="Subscription" component={Subscription} />
-            {/* <Drawer.Screen name="Speedtest" component={Speedtest} /> */}
             <Drawer.Screen name="SignUp" component={SignUp} />
             <Drawer.Screen name="Login" component={Login} />
           </Drawer.Navigator>

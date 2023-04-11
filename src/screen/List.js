@@ -1,12 +1,8 @@
-import { View, ImageBackground, TouchableOpacity, FlatList } from 'react-native';
+import { TouchableOpacity, FlatList } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import image from '../assets/background1.jpg';
 import LinearGradient from 'react-native-linear-gradient';
 import { Avatar, Box, Text } from 'native-base';
-import Icon from 'react-native-vector-icons/AntDesign';
-import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import GR from '../assets/ca.jpg';
 import DrawerButton from '../component/DrawerButton';
 import { Data } from '../modal/Data';
 import { AuthContext } from '../navigation/AuthProvider';
@@ -22,7 +18,6 @@ const List = ({ navigation }) => {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          // console.log('User Data', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });
@@ -33,9 +28,6 @@ const List = ({ navigation }) => {
     }
   }, []);
 
-
-  // const output1 = new Date(userAllData?.plan_CreatedAt_end?.seconds * 1000);
-  // expireDate = output1?.toISOString().substring(0, 10);
 
   const proplan = item => {
     if (user) {
