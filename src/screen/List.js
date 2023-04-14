@@ -6,8 +6,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import DrawerButton from '../component/DrawerButton';
 import { AuthContext } from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
-import axios from 'react-native-axios'
 import { InterstitialAd, BannerAd, TestIds, BannerAdSize, AdEventType } from 'react-native-google-mobile-ads';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const List = ({ navigation }) => {
   const { user, userAllData } = useContext(AuthContext);
@@ -35,21 +35,17 @@ const List = ({ navigation }) => {
     }
   }, []);
 
-
-  const getData = async () => {
-    await axios.get('https://thefind.tech/api/hello')
-      .then(function (response) {
-        setData(response.data);
-        console.log(typeof response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
+  const ListGet = async () => {
+   await AsyncStorage.getItem('list').then(item => {
+              let data = JSON.parse(item)
+              setData(data);
+        })
   }
+
   useEffect(() => {
-    getData()
-  }, [])
+  ListGet()
+  },[])
+  
 
 
   const proplan = item => {

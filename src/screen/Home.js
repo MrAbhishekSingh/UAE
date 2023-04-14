@@ -14,10 +14,6 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import LinearGradient from 'react-native-linear-gradient';
 import networkSpeed from 'react-native-network-speed';
 import DrawerButton from '../component/DrawerButton';
-import RNSimpleOpenvpn, {
-  addVpnStateListener,
-  removeVpnStateListener,
-} from 'react-native-simple-openvpn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RNSlidingButton, SlideDirection } from 'rn-sliding-button';
 import {
@@ -52,6 +48,110 @@ const Home = ({ route, navigation }) => {
     ? 'ca-app-pub-5136668440114711/9841925955'
     : 'ca-app-pub-5136668440114711/9841925955';
 
+  const adUnitIdd = __DEV__ ? 'ca-app-pub-5136668440114711/7116562400' :
+    'ca-app-pub-5136668440114711/7116562400'
+
+
+
+  useEffect(() => {
+    if (user) {
+      if (userAllData?.plan_CreatedAt_end && Object.keys(userAllData?.plan_CreatedAt_end).length > 0) {
+
+      } else {
+        let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+          requestNonPersonalizedAdsOnly: true,
+          keywords: ['fashion', 'clothing'],
+        });
+        interstitial.addAdEventListener(AdEventType.LOADED, () => {
+          interstitial.show();
+        });
+        interstitial.load();
+        return () => {
+          interstitialListener = null;
+        };
+      }
+    } else {
+      let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+        requestNonPersonalizedAdsOnly: true,
+        keywords: ['fashion', 'clothing'],
+      });
+      interstitial.addAdEventListener(AdEventType.LOADED, () => {
+        interstitial.show();
+      });
+      interstitial.load();
+      return () => {
+        interstitialListener = null;
+      };
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if (user) {
+      if (userAllData?.plan_CreatedAt_end && Object.keys(userAllData?.plan_CreatedAt_end).length > 0) {
+
+      } else {
+        if (status === '2') {
+          let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+            requestNonPersonalizedAdsOnly: true,
+            keywords: ['fashion', 'clothing'],
+          });
+          interstitial.addAdEventListener(AdEventType.LOADED, () => {
+            interstitial.show();
+          });
+          interstitial.load();
+          return () => {
+            interstitialListener = null;
+          }
+        }
+        if (status === '0') {
+          let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+            requestNonPersonalizedAdsOnly: true,
+            keywords: ['fashion', 'clothing'],
+          });
+          interstitial.addAdEventListener(AdEventType.LOADED, () => {
+            interstitial.show();
+          });
+          interstitial.load();
+          return () => {
+            interstitialListener = null;
+          }
+        }
+      }
+    } else {
+      if (status === '2') {
+        let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+          requestNonPersonalizedAdsOnly: true,
+          keywords: ['fashion', 'clothing'],
+        });
+        interstitial.addAdEventListener(AdEventType.LOADED, () => {
+          interstitial.show();
+        });
+        interstitial.load();
+        return () => {
+          interstitialListener = null;
+        }
+      }
+      if (status === '0') {
+        let interstitial = InterstitialAd.createForAdRequest(adUnitIdd, {
+          requestNonPersonalizedAdsOnly: true,
+          keywords: ['fashion', 'clothing'],
+        });
+        interstitial.addAdEventListener(AdEventType.LOADED, () => {
+          interstitial.show();
+        });
+        interstitial.load();
+        return () => {
+          interstitialListener = null;
+        }
+      }
+    }
+  }, [status]);
+
+
+
+
+
   useEffect(() => {
     prepare()
       .then(() => console.log('prepared'))
@@ -59,9 +159,11 @@ const Home = ({ route, navigation }) => {
         console.log(err);
       });
     onStateChangedListener(e => {
+      console.log('sdfsff',e.state);
       SaveDtat(e.state);
       setState(VpnState[e.state]);
       setCharonState(CharonErrorState[e.charonState]);
+      GetDtat()
     });
   }, []);
 
@@ -103,7 +205,7 @@ const Home = ({ route, navigation }) => {
 
       }
     } catch (error) {
-      updateLog(error);
+      // updateLog(error);
 
     }
   };
@@ -113,7 +215,7 @@ const Home = ({ route, navigation }) => {
         .then(() => console.log('disconnect: '))
         .catch(console.log)
     } catch (error) {
-      updateLog(error);
+      // updateLog(error);
     }
   };
 
@@ -123,38 +225,6 @@ const Home = ({ route, navigation }) => {
     });
   }, []);
 
-  useEffect(() => {
-    async function observeVpn() {
-      if (isIPhone) {
-        await RNSimpleOpenvpn.observeState();
-      }
-
-      addVpnStateListener(e => {
-        updateLog(JSON.stringify(e));
-        SaveDtat(e.state);
-        GetDtat();
-      });
-    }
-
-    observeVpn();
-
-    return async () => {
-      if (isIPhone) {
-        await RNSimpleOpenvpn.stopObserveState();
-      }
-
-      removeVpnStateListener();
-    };
-  });
-
-  function printVpnState() {
-    updateLog(JSON.stringify(RNSimpleOpenvpn.VpnState, undefined, 2));
-  }
-
-  function updateLog(newLog) {
-    const now = new Date().toLocaleTimeString();
-    setLog(`${log}${newLog}`);
-  }
 
   const SaveDtat = async value => {
     await AsyncStorage.setItem('name', `${value}`);
@@ -195,7 +265,7 @@ const Home = ({ route, navigation }) => {
         onPress1={() => navigation.navigate('Subscription')}
       />
       <VStack justifyContent="center" alignItems="center" height="50%">
-         {user ?
+        {user ?
           <>
             {userAllData?.plan_CreatedAt_end && Object.keys(userAllData?.plan_CreatedAt_end).length > 0
               ?
