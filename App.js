@@ -39,14 +39,7 @@ const App = () => {
 
   }
 
-  const unsubscribe = NetInfo.addEventListener(state => {
-    console.log("Connection type", state);
-  });
-
   const netInfo = useNetInfo();
-  console.log('netInfo',netInfo.isConnected);
-
-  unsubscribe()
   
 
   useEffect(() => {
